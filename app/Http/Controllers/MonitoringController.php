@@ -15,7 +15,7 @@ class MonitoringController extends Controller
      */
     public function index()
     {
-        $logs = LCOLog::orderBy('date')->get()->map(function ($item) {
+        $logs = lcoLog::orderBy('date')->get()->map(function ($item) {
             $item->date = Carbon::parse($item->date);
             return $item;
         });
@@ -30,17 +30,17 @@ class MonitoringController extends Controller
             ];
         })->values();
 
-        //  Daily progress (terbaru)
+        // Daily progress (terbaru)
         $latestDate = $logs->max('date');
         $latestLogs = $logs->filter(fn($item) => $item->date->equalTo($latestDate));
         $totalDone = $latestLogs->sum('done');
         $totalTarget = $latestLogs->sum('target');
         $totalTarget = $totalTarget > 0 ? $totalTarget : 1;
 
-        //  Distribusi produk
+        // Distribusi produk
         $productDist = ProductDistribution::select('label', 'jumlah')->get();
 
-        //  Weekly Report
+        // Weekly Report
         $weeklyReport = $logs->groupBy(function ($item) {
             $week = $item->date->weekOfMonth;
             $month = $item->date->translatedFormat('M');
@@ -54,7 +54,7 @@ class MonitoringController extends Controller
             ];
         })->values();
 
-        //  Rata-rata jam pemasangan
+        // Rata-rata jam pemasangan
         $workingLogs = $logs->groupBy(fn($item) => $item->date->format('Y-m-d'))->map(function ($group) {
             $date = $group->first()->date;
             return [
@@ -98,7 +98,7 @@ class MonitoringController extends Controller
         ]);
 
         // Simpan log monitoring
-        LCOLog::create([
+        lcoLog::create([
             'date' => $validated['date'],
             'done' => $validated['done'],
             'target' => $validated['target'],
@@ -123,7 +123,7 @@ class MonitoringController extends Controller
      */
     public function edit($id)
     {
-        $log = LCOLog::findOrFail($id);
+        $log = lcoLog::findOrFail($id);
         return view('monitoring.edit', compact('log'));
     }
 
@@ -139,7 +139,7 @@ class MonitoringController extends Controller
             'jam' => 'required|numeric|min:0',
         ]);
 
-        $log = LCOLog::findOrFail($id);
+        $log = lcoLog::findOrFail($id);
         $log->update($validated);
 
         return redirect()->route('monitoring')->with('success', 'Data berhasil diperbarui.');
