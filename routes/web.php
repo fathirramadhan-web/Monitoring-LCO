@@ -6,9 +6,7 @@ use App\Http\Controllers\Admin\DataController;
 use App\Http\Controllers\ProfileController;
 
 // ✅ Halaman utama (public)
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::redirect('/', '/monitoring');
 
 // ✅ Dashboard user setelah login
 Route::get('/dashboard', function () {
@@ -18,18 +16,18 @@ Route::get('/dashboard', function () {
 // ✅ Monitoring (akses umum)
 Route::get('/monitoring', [MonitoringController::class, 'index'])->name('monitoring');
 
-// ✅ Fitur input dan edit data log monitoring (khusus user login)
+// ✅ Fitur input dan edit data Monitoring (khusus user login)
 Route::middleware('auth')->group(function () {
-    // Form input data baru
+    // MonitoringController
     Route::get('/monitoring/create', [MonitoringController::class, 'create'])->name('monitoring.create');
     Route::post('/monitoring', [MonitoringController::class, 'store'])->name('monitoring.store');
-
-    // Form edit data berdasarkan ID
     Route::get('/monitoring/{id}/edit', [MonitoringController::class, 'edit'])->name('monitoring.edit');
     Route::put('/monitoring/{id}', [MonitoringController::class, 'update'])->name('monitoring.update');
 
-    // Edit log & distribusi
+    // DataController - untuk input dan edit model log & distribusi
     Route::get('/data', [DataController::class, 'index'])->name('data.index');
+    Route::get('/data/create/{model}', [DataController::class, 'create'])->name('data.create');
+    Route::post('/data/store/{model}', [DataController::class, 'store'])->name('data.store');
     Route::get('/data/{model}/{id}/edit', [DataController::class, 'edit'])->name('data.edit');
     Route::put('/data/{model}/{id}', [DataController::class, 'update'])->name('data.update');
 
