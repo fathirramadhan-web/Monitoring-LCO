@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\LCOLog;
+use App\Models\lcoLog;
 use App\Models\ProductDistribution;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -30,17 +30,17 @@ class MonitoringController extends Controller
             ];
         })->values();
 
-        // 📈 Daily progress (terbaru)
+        //  Daily progress (terbaru)
         $latestDate = $logs->max('date');
         $latestLogs = $logs->filter(fn($item) => $item->date->equalTo($latestDate));
         $totalDone = $latestLogs->sum('done');
         $totalTarget = $latestLogs->sum('target');
         $totalTarget = $totalTarget > 0 ? $totalTarget : 1;
 
-        // 📦 Distribusi produk
+        //  Distribusi produk
         $productDist = ProductDistribution::select('label', 'jumlah')->get();
 
-        // 📊 Weekly Report
+        //  Weekly Report
         $weeklyReport = $logs->groupBy(function ($item) {
             $week = $item->date->weekOfMonth;
             $month = $item->date->translatedFormat('M');
@@ -54,7 +54,7 @@ class MonitoringController extends Controller
             ];
         })->values();
 
-        // ⏱️ Rata-rata jam pemasangan
+        //  Rata-rata jam pemasangan
         $workingLogs = $logs->groupBy(fn($item) => $item->date->format('Y-m-d'))->map(function ($group) {
             $date = $group->first()->date;
             return [
