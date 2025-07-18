@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class lcolog extends Model
+class LCOlog extends Model
 {
     // ✅ Spesifikasikan nama tabel karena bukan konvensi default Laravel
     protected $table = 'lcologs';
